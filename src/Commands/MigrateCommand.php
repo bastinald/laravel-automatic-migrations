@@ -47,7 +47,7 @@ class MigrateCommand extends Command
 
     public function handleAutomaticMigrations()
     {
-        $path = app_path('Models');
+        $path = is_dir(app_path('Models')) ? app_path('Models') : app_path();
         $namespace = app()->getNamespace();
 
         foreach ((new Finder)->in($path) as $model) {
