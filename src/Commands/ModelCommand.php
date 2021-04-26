@@ -45,4 +45,9 @@ class ModelCommand extends ModelMakeCommand
             '--force' => true,
         ] : []));
     }
+
+    protected function createMigration()
+    {
+        // do not create migration files
+    }
 }
