@@ -22,6 +22,8 @@ class ModelCommand extends ModelMakeCommand
             }
         }
 
+        $this->createFactory();
+
         return parent::handle();
     }
 
@@ -44,10 +46,5 @@ class ModelCommand extends ModelMakeCommand
         ], $this->option('force') ? [
             '--force' => true,
         ] : []));
-    }
-
-    protected function createMigration()
-    {
-        // do not create migration files
     }
 }

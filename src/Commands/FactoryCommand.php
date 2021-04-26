@@ -17,8 +17,8 @@ class FactoryCommand extends FactoryMakeCommand
     protected function getOptions()
     {
         return [
-            ['model', 'm', InputOption::VALUE_OPTIONAL, 'The name of the model'],
             ['force', null, InputOption::VALUE_NONE, 'Create the class even if the factory already exists'],
+            ['model', 'm', InputOption::VALUE_OPTIONAL, 'The name of the model'],
         ];
     }
 }
