@@ -1,0 +1,29 @@
+{
+    "name": "bastinald/laravel-automatic-migrations",
+    "homepage": "https://github.com/bastinald/laravel-automatic-migrations",
+    "description": "Automatic migrations for your Laravel models.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kevin Dion",
+            "email": "bastinald@icloud.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "doctrine/dbal": "^3.0",
+        "laravel/framework": "^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Bastinald\\Migrations\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Bastinald\\Migrations\\Providers\\MigrationsProvider"
+            ]
+        }
+    }
+}
