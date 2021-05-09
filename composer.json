@@ -16,13 +16,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Bastinald\\Migrations\\": "src"
+            "Bastinald\\LaravelAutomaticMigrations\\": "src"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Bastinald\\Migrations\\Providers\\MigrationsProvider"
+                "Bastinald\\LaravelAutomaticMigrations\\Providers\\LaravelAutomaticMigrationsProvider"
             ]
         }
     }

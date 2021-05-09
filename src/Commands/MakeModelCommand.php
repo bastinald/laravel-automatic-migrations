@@ -1,11 +1,11 @@
 <?php
 
-namespace Bastinald\Migrations\Commands;
+namespace Bastinald\LaravelAutomaticMigrations\Commands;
 
 use Illuminate\Foundation\Console\ModelMakeCommand;
 use Illuminate\Support\Str;
 
-class ModelCommand extends ModelMakeCommand
+class MakeModelCommand extends ModelMakeCommand
 {
     protected $name = 'make:amodel';
     private $studlyName;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Bastinald\Migrations\Commands;
+namespace Bastinald\LaravelAutomaticMigrations\Commands;
 
 use Illuminate\Console\Command;
 use Doctrine\DBAL\Schema\Comparator;
@@ -10,7 +10,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Str;
 use Symfony\Component\Finder\Finder;
 
-class MigrateCommand extends Command
+class MigrateAutoCommand extends Command
 {
     protected $signature = 'migrate:auto {--fresh} {--seed} {--force}';
 

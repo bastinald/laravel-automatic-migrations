@@ -1,11 +1,11 @@
 <?php
 
-namespace Bastinald\Migrations\Commands;
+namespace Bastinald\LaravelAutomaticMigrations\Commands;
 
 use Illuminate\Database\Console\Factories\FactoryMakeCommand;
 use Symfony\Component\Console\Input\InputOption;
 
-class FactoryCommand extends FactoryMakeCommand
+class MakeFactoryCommand extends FactoryMakeCommand
 {
     protected $name = 'make:afactory';
 
