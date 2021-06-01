@@ -1,0 +1,25 @@
+<?php
+
+namespace {{ factoryNamespace }};
+
+use Illuminate\Database\Eloquent\Factories\Factory;
+use {{ namespacedModel }};
+
+class {{ factory }}Factory extends Factory
+{
+    protected $model = {{ model }}::class;
+
+    public function definition()
+    {
+        return app($this->model)->definition($this->faker);
+    }
+
+    public function unverified()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'email_verified_at' => null,
+            ];
+        });
+    }
+}

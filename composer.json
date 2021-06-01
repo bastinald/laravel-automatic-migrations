@@ -1,7 +1,7 @@
 {
     "name": "bastinald/laravel-automatic-migrations",
     "homepage": "https://github.com/bastinald/laravel-automatic-migrations",
-    "description": "Automatic migrations for your Laravel models.",
+    "description": "Automatic Laravel model migrations.",
     "license": "MIT",
     "authors": [
         {

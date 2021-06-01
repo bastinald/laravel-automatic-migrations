@@ -12,7 +12,7 @@ use Symfony\Component\Finder\Finder;
 
 class MigrateAutoCommand extends Command
 {
-    protected $signature = 'migrate:auto {--fresh} {--seed} {--force}';
+    protected $signature = 'migrate:auto {--f|--fresh} {--s|--seed} {--force}';
 
     public function handle()
     {
@@ -22,15 +22,15 @@ class MigrateAutoCommand extends Command
             return;
         }
 
-        $this->handleTraditionalMigrations();
-        $this->handleAutomaticMigrations();
+        $this->runTraditionalMigrations();
+        $this->runAutomaticMigrations();
 
         if ($this->option('seed')) {
             $this->seed();
         }
     }
 
-    public function handleTraditionalMigrations()
+    public function runTraditionalMigrations()
     {
         $command = 'migrate';
 
@@ -45,7 +45,7 @@ class MigrateAutoCommand extends Command
         Artisan::call($command);
     }
 
-    public function handleAutomaticMigrations()
+    public function runAutomaticMigrations()
     {
         $path = is_dir(app_path('Models')) ? app_path('Models') : app_path();
         $namespace = app()->getNamespace();
