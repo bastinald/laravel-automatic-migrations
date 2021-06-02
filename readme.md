@@ -4,6 +4,18 @@ Automatic Laravel model migrations. Instead of having to create and manage migra
 
 This package works perfectly fine alongside traditional Laravel migration files, for the edge cases where you still need migrations that are not coupled to a model. When you run the `migrate:auto` command, it will run your traditional migrations first, and the automatic migrations afterwards.
 
+### Documentation
+
+- [Installation](#installation)
+- [Usage](#usage)
+- [Commands](#commands)
+    - [Making Models](#making-models)
+    - [Making Factories](#making-factories)
+    - [Running Migrations](#running-migrations)
+- [Publishing Stubs](#publishing-stubs)
+- [Traits](#traits)
+    - [HasHashes](#hashashes)
+
 ## Installation
 
 Require the package via composer:
@@ -48,6 +60,8 @@ Make a model with a `migration` method included:
 php artisan make:amodel {name}
 ```
 
+---
+
 ### Making Factories
 
 Make a factory whose `definition` points to a model:
@@ -56,7 +70,9 @@ Make a factory whose `definition` points to a model:
 php artisan make:afactory {name}
 ```
 
-### Running Automatic Migrations
+---
+
+### Running Migrations
 
 Run automatic migrations:
 
