@@ -40,7 +40,7 @@ php artisan migrate:auto
 
 ## Commands
 
-#### Making Models
+### Making Models
 
 Make a model with a `migration` method included:
 
@@ -48,7 +48,7 @@ Make a model with a `migration` method included:
 php artisan make:amodel {name}
 ```
 
-#### Making Factories
+### Making Factories
 
 Make a factory whose `definition` points to a model:
 
@@ -56,7 +56,7 @@ Make a factory whose `definition` points to a model:
 php artisan make:afactory {name}
 ```
 
-#### Running Automatic Migrations
+### Running Automatic Migrations
 
 Run automatic migrations:
 
@@ -64,7 +64,7 @@ Run automatic migrations:
 php artisan migrate:auto {--f|--fresh} {--s|--seed} {--force}
 ```
 
-## Custom Stubs
+## Publishing Stubs
 
 Use your own model and factory stubs by publishing package files:
 
@@ -82,7 +82,7 @@ Now just edit the stub files inside `resources/stubs/vendor/laravel-automatic-mi
 
 ## Traits
 
-#### HasHashes
+### HasHashes
 
 This trait will automatically hash attributes specified via a `$hashes` property in your model. It will only do so if the values are not already hashed, so it does not slow down seeders.
 
