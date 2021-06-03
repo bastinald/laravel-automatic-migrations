@@ -25,6 +25,7 @@ class {{ class }} extends Model
     {
         return [
             'name' => $faker->firstName,
+            'created_at' => $faker->dateTimeBetween(now()->subMonth()),
         ];
     }
 }
