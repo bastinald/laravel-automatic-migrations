@@ -62,6 +62,8 @@ Make a model with a `migration` method included:
 php artisan make:amodel {class} {--f|--factory} {--force}
 ```
 
+Use `-f` to create a factory for the model at the same time. Use `--force` to overwrite an existing model.
+
 ### Making Factories
 
 Make a factory whose `definition` points to a model:
@@ -70,6 +72,8 @@ Make a factory whose `definition` points to a model:
 php artisan make:afactory {class} {--m|--model} {--force}
 ```
 
+Use `-m` to create a model for the factory at the same time. Use `--force` to overwrite an existing factory.
+
 ### Running Migrations
 
 Run automatic migrations:
@@ -77,6 +81,8 @@ Run automatic migrations:
 ```console
 php artisan migrate:auto {--f|--fresh} {--s|--seed} {--force}
 ```
+
+Use `-f` to wipe the database, `-s` to seed after migration, and `--force` to run migrations in production.
 
 ## Publishing Stubs
 
