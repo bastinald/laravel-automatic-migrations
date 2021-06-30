@@ -1,13 +1,13 @@
 <?php
 
-namespace {{ factoryNamespace }};
+namespace DummyFactoryNamespace;
 
+use DummyModelNamespace\DummyModelClass;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use {{ namespacedModel }};
 
-class {{ factory }}Factory extends Factory
+class DummyFactoryClass extends Factory
 {
-    protected $model = {{ model }}::class;
+    protected $model = DummyModelClass::class;
 
     public function definition()
     {

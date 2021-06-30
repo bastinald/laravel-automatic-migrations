@@ -14,8 +14,8 @@ class LaravelAutomaticMigrationsProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 MakeAFactoryCommand::class,
-                MigrateAutoCommand::class,
                 MakeAModelCommand::class,
+                MigrateAutoCommand::class,
             ]);
         }
 

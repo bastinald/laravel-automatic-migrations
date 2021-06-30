@@ -17,7 +17,7 @@ class MigrateAutoCommand extends Command
     public function handle()
     {
         if (app()->environment('production') && !$this->option('force')) {
-            $this->warn('You must use the <info>--force</info> to migrate in production!');
+            $this->warn('Use the <info>--force</info> to migrate in production.');
 
             return;
         }
@@ -30,7 +30,7 @@ class MigrateAutoCommand extends Command
         }
     }
 
-    public function runTraditionalMigrations()
+    private function runTraditionalMigrations()
     {
         $command = 'migrate';
 
@@ -42,10 +42,10 @@ class MigrateAutoCommand extends Command
             $command .= ' --force';
         }
 
-        Artisan::call($command);
+        Artisan::call($command, [], $this->getOutput());
     }
 
-    public function runAutomaticMigrations()
+    private function runAutomaticMigrations()
     {
         $path = is_dir(app_path('Models')) ? app_path('Models') : app_path();
         $namespace = app()->getNamespace();
@@ -62,10 +62,10 @@ class MigrateAutoCommand extends Command
             }
         }
 
-        $this->info('Migration complete!');
+        $this->info('Automatic migration completed successfully.');
     }
 
-    public function migrate($model)
+    private function migrate($model)
     {
         $model = app($model);
         $modelTable = $model->getTable();
@@ -85,6 +85,8 @@ class MigrateAutoCommand extends Command
 
             if ($tableDiff) {
                 $schemaManager->alterTable($tableDiff);
+
+                $this->warn('Table updated: <info>' . $modelTable . '</info>');
             }
 
             Schema::drop($tempTable);
@@ -92,10 +94,12 @@ class MigrateAutoCommand extends Command
             Schema::create($modelTable, function (Blueprint $table) use ($model) {
                 $model->migration($table);
             });
+
+            $this->warn('Table created: <info>' . $modelTable . '</info>');
         }
     }
 
-    public function seed()
+    private function seed()
     {
         $command = 'db:seed';
 
@@ -103,8 +107,6 @@ class MigrateAutoCommand extends Command
             $command .= ' --force';
         }
 
-        Artisan::call($command);
-
-        $this->info('Seeding complete!');
+        Artisan::call($command, [], $this->getOutput());
     }
 }

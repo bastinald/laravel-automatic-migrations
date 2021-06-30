@@ -1,6 +1,6 @@
 <?php
 
-namespace {{ namespace }};
+namespace DummyModelNamespace;
 
 use Bastinald\LaravelAutomaticMigrations\Traits\HasHashes;
 use Faker\Generator;
@@ -10,7 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 
-class {{ class }} extends Authenticatable
+class DummyModelClass extends Authenticatable
 {
     use HasFactory, HasHashes, Notifiable;
 
@@ -39,7 +39,7 @@ class {{ class }} extends Authenticatable
             'email_verified_at' => now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),
-            'created_at' => $faker->dateTimeBetween(now()->subMonth()),
+            'created_at' => $faker->dateTimeBetween(now()->subMonth(), now()),
         ];
     }
 }

@@ -1,13 +1,13 @@
 <?php
 
-namespace {{ namespace }};
+namespace DummyModelNamespace;
 
 use Faker\Generator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Blueprint;
 
-class {{ class }} extends Model
+class DummyModelClass extends Model
 {
     use HasFactory;
 
@@ -24,8 +24,8 @@ class {{ class }} extends Model
     public function definition(Generator $faker)
     {
         return [
-            'name' => $faker->firstName,
-            'created_at' => $faker->dateTimeBetween(now()->subMonth()),
+            'name' => $faker->word,
+            'created_at' => $faker->dateTimeBetween(now()->subMonth(), now()),
         ];
     }
 }

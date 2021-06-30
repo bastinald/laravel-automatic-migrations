@@ -2,27 +2,61 @@
 
 namespace Bastinald\LaravelAutomaticMigrations\Commands;
 
-use Illuminate\Foundation\Console\ModelMakeCommand;
-use Illuminate\Support\Str;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
+use Livewire\Commands\ComponentParser;
 
-class MakeAModelCommand extends ModelMakeCommand
+class MakeAModelCommand extends Command
 {
-    protected $name = 'make:amodel';
+    protected $signature = 'make:amodel {class} {--f|--factory} {--force}';
+    private $modelParser;
 
     public function handle()
     {
-        $this->call('make:afactory', [
-            'name' => Str::studly($this->argument('name')),
-            '--force' => $this->option('force'),
-        ]);
+        $this->modelParser = new ComponentParser(
+            is_dir(app_path('Models')) ? 'App\\Models' : 'App',
+            config('livewire.view_path'),
+            $this->argument('class')
+        );
 
-        return parent::handle();
+        if (file_exists($this->modelParser->classPath()) && !$this->option('force')) {
+            $this->warn('Model exists: <info>' . $this->modelParser->relativeClassPath() . '</info>');
+            $this->warn('Use the <info>--force</info> to overwrite it.');
+
+            return;
+        }
+
+        $this->makeStub();
+
+        if ($this->option('factory')) {
+            $this->makeFactory();
+        }
     }
 
-    protected function getStub()
+    private function makeStub()
     {
-        $stub = Str::studly($this->argument('name')) == 'User' ? 'user-model' : 'model';
+        $replaces = [
+            'DummyModelClass' => $this->modelParser->className(),
+            'DummyModelNamespace' => $this->modelParser->classNamespace(),
+        ];
+        $stub = $this->modelParser->className() == 'User' ? 'UserModel.php' : 'Model.php';
 
-        return rtrim(config('laravel-automatic-migrations.stub_path'), '/') . '/' . $stub . '.stub';
+        $contents = str_replace(
+            array_keys($replaces),
+            $replaces,
+            file_get_contents(config('laravel-automatic-migrations.stub_path') . DIRECTORY_SEPARATOR . $stub)
+        );
+
+        file_put_contents($this->modelParser->classPath(), $contents);
+
+        $this->warn('Model made: <info>' . $this->modelParser->relativeClassPath() . '</info>');
+    }
+
+    private function makeFactory()
+    {
+        Artisan::call('make:afactory', [
+            'class' => $this->modelParser->className() . 'Factory',
+            '--force' => $this->option('force'),
+        ], $this->getOutput());
     }
 }

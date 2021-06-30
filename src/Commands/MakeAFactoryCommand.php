@@ -2,27 +2,82 @@
 
 namespace Bastinald\LaravelAutomaticMigrations\Commands;
 
-use Illuminate\Database\Console\Factories\FactoryMakeCommand;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
-use Symfony\Component\Console\Input\InputOption;
+use Livewire\Commands\ComponentParser;
 
-class MakeAFactoryCommand extends FactoryMakeCommand
+class MakeAFactoryCommand extends Command
 {
-    protected $name = 'make:afactory';
+    protected $signature = 'make:afactory {class} {--m|--model} {--force}';
+    private $modelParser;
+    private $factoryParser;
 
-    protected function getStub()
+    public function handle()
     {
-        $studlyName = Str::studly($this->argument('name'));
-        $stub = in_array($studlyName, ['User', 'UserFactory']) ? 'user-factory' : 'factory';
+        $modelClass = Str::replaceLast('Factory', '', $this->argument('class'));
 
-        return rtrim(config('laravel-automatic-migrations.stub_path'), '/') . '/' . $stub . '.stub';
+        $this->modelParser = new ComponentParser(
+            is_dir(app_path('Models')) ? 'App\\Models' : 'App',
+            config('livewire.view_path'),
+            $modelClass
+        );
+
+        $this->factoryParser = new ComponentParser(
+            'Database\\Factories',
+            config('livewire.view_path'),
+            $modelClass . 'Factory'
+        );
+
+        if (file_exists($this->replacePath('classPath')) && !$this->option('force')) {
+            $this->warn('Factory exists: <info>' . $this->replacePath('relativeClassPath') . '</info>');
+            $this->warn('Use the <info>--force</info> to overwrite it.');
+
+            return;
+        }
+
+        $this->makeStub();
+
+        if ($this->option('model')) {
+            $this->makeModel();
+        }
     }
 
-    protected function getOptions()
+    private function replacePath($method)
     {
-        return [
-            ['model', 'm', InputOption::VALUE_OPTIONAL, 'The name of the model'],
-            ['force', null, InputOption::VALUE_NONE, 'Create the class even if the factory already exists'],
+        return Str::replaceFirst(
+            'app' . DIRECTORY_SEPARATOR . 'Database' . DIRECTORY_SEPARATOR . 'Factories',
+            'database' . DIRECTORY_SEPARATOR . 'factories',
+            $this->factoryParser->$method()
+        );
+    }
+
+    private function makeStub()
+    {
+        $replaces = [
+            'DummyFactoryClass' => $this->factoryParser->className(),
+            'DummyFactoryNamespace' => $this->factoryParser->classNamespace(),
+            'DummyModelClass' => $this->modelParser->className(),
+            'DummyModelNamespace' => $this->modelParser->classNamespace(),
         ];
+        $stub = $this->modelParser->className() == 'User' ? 'UserFactory.php' : 'Factory.php';
+
+        $contents = str_replace(
+            array_keys($replaces),
+            $replaces,
+            file_get_contents(config('laravel-automatic-migrations.stub_path') . DIRECTORY_SEPARATOR . $stub)
+        );
+
+        file_put_contents($this->replacePath('classPath'), $contents);
+
+        $this->warn('Factory made: <info>' . $this->replacePath('relativeClassPath') . '</info>');
+    }
+
+    private function makeModel()
+    {
+        Artisan::call('make:amodel', [
+            'class' => $this->modelParser->className(),
+            '--force' => $this->option('force'),
+        ], $this->getOutput());
     }
 }

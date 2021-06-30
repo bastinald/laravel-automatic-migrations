@@ -1,8 +1,8 @@
 # Laravel Automatic Migrations
 
-Automatic Laravel model migrations. Instead of having to create and manage migration files, this package allows you to specify your migrations inside your model classes via a `migration` method. When you run the `migrate:auto` command, it uses Doctrine to compare your model `migration` methods to the existing schema, and applies the changes automatically.
+Instead of having to create and manage migration files, this package allows you to specify your migrations inside your model classes via a `migration` method. When you run the `migrate:auto` command, it uses Doctrine to compare your model `migration` methods to the existing schema, and applies the changes automatically.
 
-This package works perfectly fine alongside traditional Laravel migration files, for the edge cases where you still need migrations that are not coupled to a model. When you run the `migrate:auto` command, it will run your traditional migrations first, and the automatic migrations afterwards.
+This package works fine alongside traditional Laravel migration files, for the cases where you still need migrations that are not coupled to a model. When you run the `migrate:auto` command, it will run your traditional migrations first, and the automatic migrations afterwards.
 
 ### Documentation
 
@@ -29,6 +29,8 @@ composer require bastinald/laravel-automatic-migrations
 Declare a `migration` method in your models:
 
  ```php
+namespace App\Models;
+
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Eloquent\Model;
 
@@ -57,20 +59,16 @@ php artisan migrate:auto
 Make a model with a `migration` method included:
 
 ```console
-php artisan make:amodel {name}
+php artisan make:amodel {class} {--f|--factory} {--force}
 ```
-
----
 
 ### Making Factories
 
 Make a factory whose `definition` points to a model:
 
 ```console
-php artisan make:afactory {name}
+php artisan make:afactory {class} {--m|--model} {--force}
 ```
-
----
 
 ### Running Migrations
 
@@ -91,10 +89,10 @@ php artisan vendor:publish --tag=laravel-automatic-migrations
 Update the `stub_path` in `config/laravel-automatic-migrations.php`:
 
 ```php
-'stub_path' => base_path('resources/stubs/vendor/laravel-automatic-migrations'),
+'stub_path' => resource_path('stubs/vendor/laravel-automatic-migrations'),
 ```
 
-Now just edit the stub files inside `resources/stubs/vendor/laravel-automatic-migrations` to your needs. The commands will now use these stub files to make models and factories.
+Now edit the stub files inside `resources/stubs/vendor/laravel-automatic-migrations`. Commands will now use these stub files to make models and factories.
 
 ## Traits
 
@@ -103,6 +101,8 @@ Now just edit the stub files inside `resources/stubs/vendor/laravel-automatic-mi
 This trait will automatically hash attributes specified via a `$hashes` property in your model. It will only do so if the values are not already hashed, so it does not slow down seeders.
 
 ```php
+namespace App\Models;
+
 use Bastinald\LaravelAutomaticMigrations\Traits\HasHashes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
