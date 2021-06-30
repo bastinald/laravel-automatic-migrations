@@ -69,15 +69,14 @@ class MigrateAutoCommand extends Command
     {
         $model = app($model);
         $modelTable = $model->getTable();
+        $tempTable = 'table_' . $modelTable;
+
+        Schema::dropIfExists($tempTable);
+        Schema::create($tempTable, function (Blueprint $table) use ($model) {
+            $model->migration($table);
+        });
 
         if (Schema::hasTable($modelTable)) {
-            $tempTable = 'temp_' . $modelTable;
-
-            Schema::dropIfExists($tempTable);
-            Schema::create($tempTable, function (Blueprint $table) use ($model) {
-                $model->migration($table);
-            });
-
             $schemaManager = $model->getConnection()->getDoctrineSchemaManager();
             $modelTableDetails = $schemaManager->listTableDetails($modelTable);
             $tempTableDetails = $schemaManager->listTableDetails($tempTable);
@@ -91,9 +90,7 @@ class MigrateAutoCommand extends Command
 
             Schema::drop($tempTable);
         } else {
-            Schema::create($modelTable, function (Blueprint $table) use ($model) {
-                $model->migration($table);
-            });
+            Schema::rename($tempTable, $modelTable);
 
             $this->warn('Table created: <info>' . $modelTable . '</info>');
         }
