@@ -26,10 +26,29 @@ class MakeAModelCommand extends Command
             return;
         }
 
+        if ($this->modelParser->className() == 'User') {
+            $this->deleteUserMigration();
+        }
+
         $this->makeStub();
 
         if ($this->option('factory')) {
             $this->makeFactory();
+        }
+    }
+
+    private function deleteUserMigration()
+    {
+        $userMigrationName = 'database' . DIRECTORY_SEPARATOR .
+            'migrations' . DIRECTORY_SEPARATOR .
+            '2014_10_12_000000_create_users_table.php';
+
+        $userMigrationFile = base_path($userMigrationName);
+
+        if (file_exists($userMigrationFile)) {
+            unlink($userMigrationFile);
+
+            $this->warn('Migration deleted: <info>' . $userMigrationName . '</info>');
         }
     }
 
