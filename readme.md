@@ -4,7 +4,7 @@ Instead of having to create and manage migration files, this package allows you 
 
 This package works fine alongside traditional Laravel migration files, for the cases where you still need migrations that are not coupled to a model. When you run the `migrate:auto` command, it will run your traditional migrations first, and the automatic migrations afterwards.
 
-### Documentation
+## Documentation
 
 - [Installation](#installation)
 - [Usage](#usage)
