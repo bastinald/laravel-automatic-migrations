@@ -11,17 +11,20 @@ use Livewire\Commands\ComponentParser;
 class MakeAModelCommand extends Command
 {
     protected $signature = 'make:amodel {class} {--f|--factory} {--force}';
+    private $filesystem;
     private $modelParser;
 
     public function handle()
     {
+        $this->filesystem = new Filesystem;
+
         $this->modelParser = new ComponentParser(
             is_dir(app_path('Models')) ? 'App\\Models' : 'App',
             config('livewire.view_path'),
             $this->argument('class')
         );
 
-        if (file_exists($this->modelParser->classPath()) && !$this->option('force')) {
+        if ($this->filesystem->exists($this->modelParser->classPath()) && !$this->option('force')) {
             $this->warn('Model exists: <info>' . $this->modelParser->relativeClassPath() . '</info>');
             $this->warn('Use the <info>--force</info> to overwrite it.');
 
@@ -43,11 +46,10 @@ class MakeAModelCommand extends Command
     {
         $path = 'database/migrations';
         $names = ['create_users_table', 'add_timezone_column_to_users_table'];
-        $filesystem = new Filesystem;
 
-        foreach ($filesystem->allFiles(base_path($path)) as $file) {
+        foreach ($this->filesystem->allFiles(base_path($path)) as $file) {
             if (Str::contains($file, $names)) {
-                $filesystem->delete($file);
+                $this->filesystem->delete($file);
 
                 $this->warn('File deleted: <info>' . $path . '/' . $file->getRelativePathname() . '</info>');
             }
@@ -65,10 +67,10 @@ class MakeAModelCommand extends Command
         $contents = str_replace(
             array_keys($replaces),
             $replaces,
-            file_get_contents(config('laravel-automatic-migrations.stub_path') . '/' . $stub)
+            $this->filesystem->get(config('laravel-automatic-migrations.stub_path') . '/' . $stub)
         );
 
-        file_put_contents($this->modelParser->classPath(), $contents);
+        $this->filesystem->put($this->modelParser->classPath(), $contents);
 
         $this->warn('Model made: <info>' . $this->modelParser->relativeClassPath() . '</info>');
     }

@@ -3,6 +3,7 @@
 namespace Bastinald\LaravelAutomaticMigrations\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
 use Livewire\Commands\ComponentParser;
@@ -10,17 +11,18 @@ use Livewire\Commands\ComponentParser;
 class MakeAFactoryCommand extends Command
 {
     protected $signature = 'make:afactory {class} {--m|--model} {--force}';
+    private $filesystem;
     private $modelParser;
     private $factoryParser;
 
     public function handle()
     {
-        $modelClass = Str::replaceLast('Factory', '', $this->argument('class'));
+        $this->filesystem = new Filesystem;
 
         $this->modelParser = new ComponentParser(
             is_dir(app_path('Models')) ? 'App\\Models' : 'App',
             config('livewire.view_path'),
-            $modelClass
+            $modelClass = Str::replaceLast('Factory', '', $this->argument('class'))
         );
 
         $this->factoryParser = new ComponentParser(
@@ -29,7 +31,7 @@ class MakeAFactoryCommand extends Command
             $modelClass . 'Factory'
         );
 
-        if (file_exists($this->replacePath('classPath')) && !$this->option('force')) {
+        if ($this->filesystem->exists($this->replacePath('classPath')) && !$this->option('force')) {
             $this->warn('Factory exists: <info>' . $this->replacePath('relativeClassPath') . '</info>');
             $this->warn('Use the <info>--force</info> to overwrite it.');
 
@@ -65,10 +67,10 @@ class MakeAFactoryCommand extends Command
         $contents = str_replace(
             array_keys($replaces),
             $replaces,
-            file_get_contents(config('laravel-automatic-migrations.stub_path') . '/' . $stub)
+            $this->filesystem->get(config('laravel-automatic-migrations.stub_path') . '/' . $stub)
         );
 
-        file_put_contents($this->replacePath('classPath'), $contents);
+        $this->filesystem->put($this->replacePath('classPath'), $contents);
 
         $this->warn('Factory made: <info>' . $this->replacePath('relativeClassPath') . '</info>');
     }
