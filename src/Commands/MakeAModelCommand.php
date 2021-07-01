@@ -39,10 +39,7 @@ class MakeAModelCommand extends Command
 
     private function deleteUserMigration()
     {
-        $userMigrationName = 'database' . DIRECTORY_SEPARATOR .
-            'migrations' . DIRECTORY_SEPARATOR .
-            '2014_10_12_000000_create_users_table.php';
-
+        $userMigrationName = 'database/migrations/2014_10_12_000000_create_users_table.php';
         $userMigrationFile = base_path($userMigrationName);
 
         if (file_exists($userMigrationFile)) {
@@ -63,7 +60,7 @@ class MakeAModelCommand extends Command
         $contents = str_replace(
             array_keys($replaces),
             $replaces,
-            file_get_contents(config('laravel-automatic-migrations.stub_path') . DIRECTORY_SEPARATOR . $stub)
+            file_get_contents(config('laravel-automatic-migrations.stub_path') . '/' . $stub)
         );
 
         file_put_contents($this->modelParser->classPath(), $contents);
