@@ -27,6 +27,7 @@ class DummyModelClass extends Authenticatable
         $table->timestamp('email_verified_at')->nullable();
         $table->string('password');
         $table->rememberToken();
+        $table->string('timezone')->nullable();
         $table->timestamp('created_at')->nullable();
         $table->timestamp('updated_at')->nullable();
     }
