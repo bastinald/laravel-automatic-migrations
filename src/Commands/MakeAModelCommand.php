@@ -27,7 +27,7 @@ class MakeAModelCommand extends Command
         }
 
         if ($this->modelParser->className() == 'User') {
-            $this->deleteUserMigration();
+            $this->deleteUserMigrationFile();
         }
 
         $this->makeStub();
@@ -37,7 +37,7 @@ class MakeAModelCommand extends Command
         }
     }
 
-    private function deleteUserMigration()
+    private function deleteUserMigrationFile()
     {
         $userMigrationName = 'database/migrations/2014_10_12_000000_create_users_table.php';
         $userMigrationFile = base_path($userMigrationName);
@@ -45,7 +45,7 @@ class MakeAModelCommand extends Command
         if (file_exists($userMigrationFile)) {
             unlink($userMigrationFile);
 
-            $this->warn('Migration deleted: <info>' . $userMigrationName . '</info>');
+            $this->warn('File deleted: <info>' . $userMigrationName . '</info>');
         }
     }
 
