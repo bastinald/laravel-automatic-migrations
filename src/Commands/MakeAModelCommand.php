@@ -3,7 +3,9 @@
 namespace Bastinald\LaravelAutomaticMigrations\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Str;
 use Livewire\Commands\ComponentParser;
 
 class MakeAModelCommand extends Command
@@ -27,7 +29,7 @@ class MakeAModelCommand extends Command
         }
 
         if ($this->modelParser->className() == 'User') {
-            $this->deleteUserMigrationFile();
+            $this->deleteUserMigrations();
         }
 
         $this->makeStub();
@@ -37,15 +39,18 @@ class MakeAModelCommand extends Command
         }
     }
 
-    private function deleteUserMigrationFile()
+    private function deleteUserMigrations()
     {
-        $userMigrationName = 'database/migrations/2014_10_12_000000_create_users_table.php';
-        $userMigrationFile = base_path($userMigrationName);
+        $path = 'database/migrations';
+        $names = ['create_users_table', 'add_timezone_column_to_users_table'];
+        $filesystem = new Filesystem;
 
-        if (file_exists($userMigrationFile)) {
-            unlink($userMigrationFile);
+        foreach ($filesystem->allFiles(base_path($path)) as $file) {
+            if (Str::contains($file, $names)) {
+                $filesystem->delete($file);
 
-            $this->warn('File deleted: <info>' . $userMigrationName . '</info>');
+                $this->warn('File deleted: <info>' . $path . '/' . $file->getRelativePathname() . '</info>');
+            }
         }
     }
 
