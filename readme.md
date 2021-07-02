@@ -59,20 +59,20 @@ php artisan migrate:auto
 Make a model with a `migration` method included:
 
 ```console
-php artisan make:amodel {class} {--f|--factory} {--force}
+php artisan make:amodel {class} {--force}
 ```
 
-Use `-f` to create a factory for the model at the same time. Use `--force` to overwrite an existing model.
+Use `--force` to overwrite an existing model.
 
 ### Making Factories
 
 Make a factory whose `definition` points to a model:
 
 ```console
-php artisan make:afactory {class} {--m|--model} {--force}
+php artisan make:afactory {class} {--force}
 ```
 
-Use `-m` to create a model for the factory at the same time. Use `--force` to overwrite an existing factory.
+Use `--force` to overwrite an existing factory.
 
 ### Running Migrations
 

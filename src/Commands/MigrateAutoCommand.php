@@ -24,10 +24,9 @@ class MigrateAutoCommand extends Command
 
         $this->runTraditionalMigrations();
         $this->runAutomaticMigrations();
+        $this->seed();
 
-        if ($this->option('seed')) {
-            $this->seed();
-        }
+        $this->info('Automatic migration completed successfully.');
     }
 
     private function runTraditionalMigrations()
@@ -61,8 +60,6 @@ class MigrateAutoCommand extends Command
                 $this->migrate($model);
             }
         }
-
-        $this->info('Automatic migration completed successfully.');
     }
 
     private function migrate($model)
@@ -98,12 +95,14 @@ class MigrateAutoCommand extends Command
 
     private function seed()
     {
-        $command = 'db:seed';
+        if ($this->option('seed')) {
+            $command = 'db:seed';
 
-        if ($this->option('force')) {
-            $command .= ' --force';
+            if ($this->option('force')) {
+                $command .= ' --force';
+            }
+
+            Artisan::call($command, [], $this->getOutput());
         }
-
-        Artisan::call($command, [], $this->getOutput());
     }
 }

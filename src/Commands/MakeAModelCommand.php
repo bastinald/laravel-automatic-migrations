@@ -10,7 +10,7 @@ use Livewire\Commands\ComponentParser;
 
 class MakeAModelCommand extends Command
 {
-    protected $signature = 'make:amodel {class} {--f|--factory} {--force}';
+    protected $signature = 'make:amodel {class} {--force}';
     private $filesystem;
     private $modelParser;
 
@@ -31,27 +31,25 @@ class MakeAModelCommand extends Command
             return;
         }
 
-        if ($this->modelParser->className() == 'User') {
-            $this->deleteUserMigrations();
-        }
-
+        $this->deleteUserMigrations();
         $this->makeStub();
+        $this->makeFactory();
 
-        if ($this->option('factory')) {
-            $this->makeFactory();
-        }
+        $this->warn('Model made: <info>' . $this->modelParser->relativeClassPath() . '</info>');
     }
 
     private function deleteUserMigrations()
     {
-        $path = 'database/migrations';
-        $names = ['create_users_table', 'add_timezone_column_to_users_table'];
+        if ($this->modelParser->className() == 'User') {
+            $path = 'database/migrations';
+            $names = ['create_users_table', 'add_timezone_column_to_users_table'];
 
-        foreach ($this->filesystem->allFiles(base_path($path)) as $file) {
-            if (Str::contains($file, $names)) {
-                $this->filesystem->delete($file);
+            foreach ($this->filesystem->allFiles(base_path($path)) as $file) {
+                if (Str::contains($file, $names)) {
+                    $this->filesystem->delete($file);
 
-                $this->warn('File deleted: <info>' . $path . '/' . $file->getRelativePathname() . '</info>');
+                    $this->warn('File deleted: <info>' . $path . '/' . $file->getRelativePathname() . '</info>');
+                }
             }
         }
     }
@@ -71,8 +69,6 @@ class MakeAModelCommand extends Command
         );
 
         $this->filesystem->put($this->modelParser->classPath(), $contents);
-
-        $this->warn('Model made: <info>' . $this->modelParser->relativeClassPath() . '</info>');
     }
 
     private function makeFactory()

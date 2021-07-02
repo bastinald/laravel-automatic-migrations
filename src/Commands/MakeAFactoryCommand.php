@@ -10,7 +10,7 @@ use Livewire\Commands\ComponentParser;
 
 class MakeAFactoryCommand extends Command
 {
-    protected $signature = 'make:afactory {class} {--m|--model} {--force}';
+    protected $signature = 'make:afactory {class} {--force}';
     private $filesystem;
     private $modelParser;
     private $factoryParser;
@@ -39,10 +39,9 @@ class MakeAFactoryCommand extends Command
         }
 
         $this->makeStub();
+        $this->makeModel();
 
-        if ($this->option('model')) {
-            $this->makeModel();
-        }
+        $this->warn('Factory made: <info>' . $this->replacePath('relativeClassPath') . '</info>');
     }
 
     private function replacePath($method)
@@ -71,8 +70,6 @@ class MakeAFactoryCommand extends Command
         );
 
         $this->filesystem->put($this->replacePath('classPath'), $contents);
-
-        $this->warn('Factory made: <info>' . $this->replacePath('relativeClassPath') . '</info>');
     }
 
     private function makeModel()
