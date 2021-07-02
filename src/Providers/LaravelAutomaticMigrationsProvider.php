@@ -2,7 +2,6 @@
 
 namespace Bastinald\LaravelAutomaticMigrations\Providers;
 
-use Bastinald\LaravelAutomaticMigrations\Commands\MakeAFactoryCommand;
 use Bastinald\LaravelAutomaticMigrations\Commands\MakeAModelCommand;
 use Bastinald\LaravelAutomaticMigrations\Commands\MigrateAutoCommand;
 use Illuminate\Support\ServiceProvider;
@@ -13,7 +12,6 @@ class LaravelAutomaticMigrationsProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                MakeAFactoryCommand::class,
                 MakeAModelCommand::class,
                 MigrateAutoCommand::class,
             ]);

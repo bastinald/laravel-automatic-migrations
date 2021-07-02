@@ -10,7 +10,6 @@ This package works fine alongside traditional Laravel migration files, for the c
 - [Usage](#usage)
 - [Commands](#commands)
     - [Making Models](#making-models)
-    - [Making Factories](#making-factories)
     - [Running Migrations](#running-migrations)
 - [Publishing Stubs](#publishing-stubs)
 - [Traits](#traits)
@@ -62,17 +61,7 @@ Make a model with a `migration` method included:
 php artisan make:amodel {class} {--force}
 ```
 
-Use `--force` to overwrite an existing model.
-
-### Making Factories
-
-Make a factory whose `definition` points to a model:
-
-```console
-php artisan make:afactory {class} {--force}
-```
-
-Use `--force` to overwrite an existing factory.
+This command will also make a factory whose `definition` points to the model method. Use `--force` to overwrite an existing model.
 
 ### Running Migrations
 
