@@ -27,7 +27,7 @@ class MakeAModelCommand extends Command
         $this->factoryParser = new ComponentParser(
             'Database\\Factories',
             config('livewire.view_path'),
-            $this->modelParser->className() . 'Factory'
+            $this->argument('class') . 'Factory'
         );
 
         if ($this->filesystem->exists($this->modelParser->classPath()) && !$this->option('force')) {
@@ -40,8 +40,8 @@ class MakeAModelCommand extends Command
         $this->deleteUserMigrations();
         $this->makeStubs();
 
-        $this->warn('Model made: <info>' . $this->modelParser->className() . '</info>');
-        $this->warn('Factory made: <info>' . $this->factoryParser->className() . '</info>');
+        $this->warn('Model made: <info>' . $this->modelParser->relativeClassPath() . '</info>');
+        $this->warn('Factory made: <info>' . $this->factoryPath('relativeClassPath') . '</info>');
     }
 
     private function deleteUserMigrations()
@@ -51,9 +51,11 @@ class MakeAModelCommand extends Command
 
             foreach ($this->filesystem->allFiles(database_path('migrations')) as $file) {
                 if (Str::contains($file, $names)) {
+                    $path = 'database/migrations/' . $file->getRelativePathname();
+
                     $this->filesystem->delete($file);
 
-                    $this->warn('Migration deleted: <info>' . $file->getRelativePathname() . '</info>');
+                    $this->warn('Migration deleted: <info>' . $path . '</info>');
                 }
             }
         }
@@ -64,7 +66,7 @@ class MakeAModelCommand extends Command
         $stubs = [
             $this->modelParser->classPath() =>
                 $this->modelParser->className() == 'User' ? 'UserModel.php' : 'Model.php',
-            Str::replaceFirst('app/', '', $this->factoryParser->classPath()) =>
+            $this->factoryPath('classPath') =>
                 $this->modelParser->className() == 'User' ? 'UserFactory.php' : 'Factory.php',
         ];
 
@@ -85,5 +87,14 @@ class MakeAModelCommand extends Command
             $this->filesystem->ensureDirectoryExists(dirname($path));
             $this->filesystem->put($this->modelParser->classPath(), $contents);
         }
+    }
+
+    private function factoryPath($method)
+    {
+        return Str::replaceFirst(
+            'app/Database/Factories',
+            'database/factories',
+            $this->factoryParser->$method()
+        );
     }
 }
