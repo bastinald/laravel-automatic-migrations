@@ -13,7 +13,6 @@ class MakeAModelCommand extends Command
     private $filesystem;
     private $modelParser;
     private $factoryParser;
-    private $replaces;
 
     public function handle()
     {
@@ -39,7 +38,6 @@ class MakeAModelCommand extends Command
         }
 
         $this->deleteUserMigrations();
-        $this->setReplaces();
         $this->makeStubs();
 
         $this->warn('Model made: <info>' . $this->modelParser->className() . '</info>');
@@ -61,35 +59,31 @@ class MakeAModelCommand extends Command
         }
     }
 
-    private function setReplaces()
+    private function makeStubs()
     {
-        $this->replaces = [
+        $stubs = [
+            $this->modelParser->classPath() =>
+                $this->modelParser->className() == 'User' ? 'UserModel.php' : 'Model.php',
+            Str::replaceFirst('app/', '', $this->factoryParser->classPath()) =>
+                $this->modelParser->className() == 'User' ? 'UserFactory.php' : 'Factory.php',
+        ];
+
+        $replaces = [
             'DummyFactoryClass' => $this->factoryParser->className(),
             'DummyFactoryNamespace' => $this->factoryParser->classNamespace(),
             'DummyModelClass' => $this->modelParser->className(),
             'DummyModelNamespace' => $this->modelParser->classNamespace(),
         ];
-    }
 
-    private function makeStubs()
-    {
-        $this->filesystem->put(
-            Str::replace('//', '/', $this->modelParser->classPath()),
-            $this->replaceStub($this->modelParser->className() == 'User' ? 'UserModel.php' : 'Model.php')
-        );
+        foreach ($stubs as $path => $stub) {
+            $contents = Str::replace(
+                array_keys($replaces),
+                $replaces,
+                $this->filesystem->get(config('laravel-automatic-migrations.stub_path') . '/' . $stub)
+            );
 
-        $this->filesystem->put(
-            Str::replaceFirst('app/', '', Str::replace('//', '/', $this->factoryParser->classPath())),
-            $this->replaceStub($this->modelParser->className() == 'User' ? 'UserFactory.php' : 'Factory.php')
-        );
-    }
-
-    private function replaceStub($stub)
-    {
-        return Str::replace(
-            array_keys($this->replaces),
-            $this->replaces,
-            $this->filesystem->get(config('laravel-automatic-migrations.stub_path') . '/' . $stub)
-        );
+            $this->filesystem->ensureDirectoryExists(dirname($path));
+            $this->filesystem->put($this->modelParser->classPath(), $contents);
+        }
     }
 }
