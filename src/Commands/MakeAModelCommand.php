@@ -74,12 +74,12 @@ class MakeAModelCommand extends Command
     private function makeStubs()
     {
         $this->filesystem->put(
-            $this->modelParser->classPath(),
+            Str::replace('//', '/', $this->modelParser->classPath()),
             $this->replaceStub($this->modelParser->className() == 'User' ? 'UserModel.php' : 'Model.php')
         );
 
         $this->filesystem->put(
-            Str::replaceFirst('app/', '', $this->factoryParser->classPath()),
+            Str::replaceFirst('app/', '', Str::replace('//', '/', $this->factoryParser->classPath())),
             $this->replaceStub($this->modelParser->className() == 'User' ? 'UserFactory.php' : 'Factory.php')
         );
     }
