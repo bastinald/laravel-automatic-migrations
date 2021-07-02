@@ -54,7 +54,7 @@ class MigrateAutoCommand extends Command
             $model = $namespace . str_replace(
                     ['/', '.php'],
                     ['\\', ''],
-                    Str::after($model->getRealPath(), realpath(app_path()) . '/')
+                    Str::after($model->getRealPath(), realpath(app_path()) . DIRECTORY_SEPARATOR)
                 );
 
             if (method_exists($model, 'migration')) {
