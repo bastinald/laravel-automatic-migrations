@@ -85,7 +85,7 @@ class MakeAModelCommand extends Command
             );
 
             $this->filesystem->ensureDirectoryExists(dirname($path));
-            $this->filesystem->put($this->modelParser->classPath(), $contents);
+            $this->filesystem->put($path, $contents);
         }
     }
 
