@@ -42,7 +42,7 @@ class MigrateAutoCommand extends Command
             $command .= ' --force';
         }
 
-        Artisan::call($command, [], $this->getOutput());
+        Artisan::call($command);
     }
 
     private function runAutomaticMigrations()
