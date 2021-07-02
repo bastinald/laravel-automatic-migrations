@@ -41,14 +41,14 @@ class MakeAModelCommand extends Command
     private function deleteUserMigrations()
     {
         if ($this->modelParser->className() == 'User') {
-            $path = 'database/migrations';
+            $path = 'database ' . DIRECTORY_SEPARATOR . 'migrations';
             $names = ['create_users_table', 'add_timezone_column_to_users_table'];
 
             foreach ($this->filesystem->allFiles(base_path($path)) as $file) {
                 if (Str::contains($file, $names)) {
                     $this->filesystem->delete($file);
 
-                    $this->warn('File deleted: <info>' . $path . '/' . $file->getRelativePathname() . '</info>');
+                    $this->warn('File deleted: <info>' . $path . DIRECTORY_SEPARATOR . $file->getRelativePathname() . '</info>');
                 }
             }
         }
@@ -65,7 +65,7 @@ class MakeAModelCommand extends Command
         $contents = str_replace(
             array_keys($replaces),
             $replaces,
-            $this->filesystem->get(config('laravel-automatic-migrations.stub_path') . '/' . $stub)
+            $this->filesystem->get(config('laravel-automatic-migrations.stub_path') . DIRECTORY_SEPARATOR . $stub)
         );
 
         $this->filesystem->put($this->modelParser->classPath(), $contents);

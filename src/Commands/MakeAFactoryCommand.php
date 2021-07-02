@@ -47,8 +47,8 @@ class MakeAFactoryCommand extends Command
     private function replacePath($method)
     {
         return Str::replaceFirst(
-            'app/Database/Factories',
-            'database/factories',
+            'app' . DIRECTORY_SEPARATOR . 'Database' . DIRECTORY_SEPARATOR . 'Factories',
+            'database' . DIRECTORY_SEPARATOR . 'factories',
             $this->factoryParser->$method()
         );
     }
@@ -66,7 +66,7 @@ class MakeAFactoryCommand extends Command
         $contents = str_replace(
             array_keys($replaces),
             $replaces,
-            $this->filesystem->get(config('laravel-automatic-migrations.stub_path') . '/' . $stub)
+            $this->filesystem->get(config('laravel-automatic-migrations.stub_path') . DIRECTORY_SEPARATOR . $stub)
         );
 
         $this->filesystem->put($this->replacePath('classPath'), $contents);
