@@ -41,7 +41,7 @@ class MigrateAutoCommand extends Command
             $command .= ' --force';
         }
 
-        Artisan::call($command);
+        Artisan::call($command, [], $this->getOutput());
     }
 
     private function runAutomaticMigrations()
@@ -82,14 +82,14 @@ class MigrateAutoCommand extends Command
             if ($tableDiff) {
                 $schemaManager->alterTable($tableDiff);
 
-                $this->warn('Table updated: <info>' . $modelTable . '</info>');
+                $this->line('<info>Table updated:</info> ' . $modelTable);
             }
 
             Schema::drop($tempTable);
         } else {
             Schema::rename($tempTable, $modelTable);
 
-            $this->warn('Table created: <info>' . $modelTable . '</info>');
+            $this->line('<info>Table created:</info> ' . $modelTable);
         }
     }
 

@@ -31,7 +31,7 @@ class MakeAModelCommand extends Command
         );
 
         if ($this->filesystem->exists($this->modelParser->classPath()) && !$this->option('force')) {
-            $this->warn('Model exists: <info>' . $this->modelParser->className() . '</info>');
+            $this->line('<comment>Model exists:</comment> ' . $this->modelParser->relativeClassPath());
             $this->warn('Use the <info>--force</info> to overwrite it.');
 
             return;
@@ -40,8 +40,8 @@ class MakeAModelCommand extends Command
         $this->deleteUserMigrations();
         $this->makeStubs();
 
-        $this->warn('Model made: <info>' . $this->modelParser->relativeClassPath() . '</info>');
-        $this->warn('Factory made: <info>' . $this->factoryPath('relativeClassPath') . '</info>');
+        $this->line('<info>Model created:</info> ' . $this->modelParser->relativeClassPath());
+        $this->line('<info>Factory created:</info> ' . $this->factoryPath('relativeClassPath'));
     }
 
     private function deleteUserMigrations()
@@ -55,7 +55,7 @@ class MakeAModelCommand extends Command
 
                     $this->filesystem->delete($file);
 
-                    $this->warn('Migration deleted: <info>' . $path . '</info>');
+                    $this->line('<info>Migration deleted:</info> ' . $path);
                 }
             }
         }
