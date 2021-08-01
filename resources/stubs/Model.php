@@ -25,7 +25,7 @@ class DummyModelClass extends Model
     {
         return [
             'name' => $faker->word,
-            'created_at' => $faker->dateTimeBetween(now()->subMonth(), now()),
+            'created_at' => $faker->dateTimeThisMonth,
         ];
     }
 }
