@@ -46,25 +46,20 @@ class MigrateAutoCommand extends Command
 
     private function runAutomaticMigrations()
     {
-        $path = is_dir(app_path('Models')) ? app_path('Models') : app_path();
-        $namespace = app()->getNamespace();
+        foreach ((new Finder)->in(config('laravel-automatic-migrations.model_paths')) as $file) {
+            preg_match('/namespace (.*);/', $file->getContents(), $matches);
 
-        foreach ((new Finder)->in($path) as $model) {
-            $model = $namespace . str_replace(
-                    ['/', '.php'],
-                    ['\\', ''],
-                    Str::after($model->getRealPath(), realpath(app_path()) . DIRECTORY_SEPARATOR)
-                );
+            $class = str_replace('.php', '', $matches[1] . '\\' . $file->getFilename());
 
-            if (method_exists($model, 'migration')) {
-                $this->migrate($model);
+            if (method_exists($class, 'migration')) {
+                $this->migrate($class);
             }
         }
     }
 
-    private function migrate($model)
+    private function migrate($class)
     {
-        $model = app($model);
+        $model = app($class);
         $modelTable = $model->getTable();
         $tempTable = 'table_' . $modelTable;
 
