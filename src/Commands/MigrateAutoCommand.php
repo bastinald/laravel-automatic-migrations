@@ -4,7 +4,6 @@ namespace Bastinald\LaravelAutomaticMigrations\Commands;
 
 use Illuminate\Console\Command;
 use Doctrine\DBAL\Schema\Comparator;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Database\Schema\Blueprint;
@@ -47,22 +46,22 @@ class MigrateAutoCommand extends Command
 
     private function runAutomaticMigrations()
     {
-        $paths = Arr::wrap(config('laravel-automatic-migrations.model_paths'));
-        $finder = new Finder;
+        $path = app_path('Models');
+        $namespace = app()->getNamespace();
 
-        foreach ($paths as $path) {
-            if (!is_dir($path)) {
-                continue;
-            }
+        if (!is_dir($path)) {
+            return;
+        }
 
-            foreach ($finder->in($path) as $file) {
-                preg_match('/namespace (.*);/', $file->getContents(), $matches);
+        foreach ((new Finder)->in($path) as $model) {
+            $model = $namespace . str_replace(
+                    ['/', '.php'],
+                    ['\\', ''],
+                    Str::after($model->getRealPath(), realpath(app_path()) . DIRECTORY_SEPARATOR)
+                );
 
-                $class = str_replace('.php', '', $matches[1] . '\\' . $file->getFilename());
-
-                if (method_exists($class, 'migration')) {
-                    $this->migrate($class);
-                }
+            if (method_exists($model, 'migration')) {
+                $this->migrate($model);
             }
         }
     }
