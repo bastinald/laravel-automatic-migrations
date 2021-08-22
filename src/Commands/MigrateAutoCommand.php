@@ -64,6 +64,27 @@ class MigrateAutoCommand extends Command
                 $this->migrate($model);
             }
         }
+
+        $models_to_migrate = collect([]);
+
+        foreach ((new Finder)->in($path) as $model) {
+            $model = $namespace . str_replace(
+                    ['/', '.php'],
+                    ['\\', ''],
+                    Str::after($model->getRealPath(), realpath(app_path()) . DIRECTORY_SEPARATOR)
+                );
+
+            if (method_exists($model, 'migration')) {
+                $model_object = app($model);
+                $models_to_migrate[] = ['sequence' => $model_object->migration_sequence ?? 1, 'model' =>  $model];
+            }
+        }
+
+        $sorted_models_to_migrate = $models_to_migrate->sortBy('sequence');
+
+        foreach ($sorted_models_to_migrate as $model) {
+            $this->migrate($model['model']);
+        }
     }
 
     private function migrate($class)
