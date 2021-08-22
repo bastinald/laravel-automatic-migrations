@@ -46,8 +46,9 @@ class MigrateAutoCommand extends Command
 
     private function runAutomaticMigrations()
     {
-        $path = app_path('Models');
+        $path = is_dir(app_path('Models')) ? app_path('Models') : app_path();
         $namespace = app()->getNamespace();
+        $models = collect();
 
         if (!is_dir($path)) {
             return;
@@ -61,35 +62,20 @@ class MigrateAutoCommand extends Command
                 );
 
             if (method_exists($model, 'migration')) {
-                $this->migrate($model);
+                $models->push([
+                    'object' => $object = app($model),
+                    'order' => $object->migrationOrder ?? 0,
+                ]);
             }
         }
 
-        $models_to_migrate = collect([]);
-
-        foreach ((new Finder)->in($path) as $model) {
-            $model = $namespace . str_replace(
-                    ['/', '.php'],
-                    ['\\', ''],
-                    Str::after($model->getRealPath(), realpath(app_path()) . DIRECTORY_SEPARATOR)
-                );
-
-            if (method_exists($model, 'migration')) {
-                $model_object = app($model);
-                $models_to_migrate[] = ['sequence' => $model_object->migration_sequence ?? 1, 'model' =>  $model];
-            }
-        }
-
-        $sorted_models_to_migrate = $models_to_migrate->sortBy('sequence');
-
-        foreach ($sorted_models_to_migrate as $model) {
-            $this->migrate($model['model']);
+        foreach ($models->sortBy('order') as $model) {
+            $this->migrate($model['object']);
         }
     }
 
-    private function migrate($class)
+    private function migrate($model)
     {
-        $model = app($class);
         $modelTable = $model->getTable();
         $tempTable = 'table_' . $modelTable;
 
@@ -120,14 +106,16 @@ class MigrateAutoCommand extends Command
 
     private function seed()
     {
-        if ($this->option('seed')) {
-            $command = 'db:seed';
-
-            if ($this->option('force')) {
-                $command .= ' --force';
-            }
-
-            Artisan::call($command, [], $this->getOutput());
+        if (!$this->option('seed')) {
+            return;
         }
+
+        $command = 'db:seed';
+
+        if ($this->option('force')) {
+            $command .= ' --force';
+        }
+
+        Artisan::call($command, [], $this->getOutput());
     }
 }

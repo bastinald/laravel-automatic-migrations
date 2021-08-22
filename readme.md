@@ -11,6 +11,7 @@ This package works fine alongside traditional Laravel migration files, for the c
 - [Commands](#commands)
     - [Making Models](#making-models)
     - [Running Migrations](#running-migrations)
+- [Migration Order](#migration-order)
 - [Publishing Stubs](#publishing-stubs)
 - [Traits](#traits)
     - [HasHashes](#hashashes)
@@ -72,6 +73,27 @@ php artisan migrate:auto {--f|--fresh} {--s|--seed} {--force}
 ```
 
 Use `-f` to wipe the database, `-s` to seed after migration, and `--force` to run migrations in production.
+
+## Migration Order
+
+You can specify the order to run your model migrations by adding a public `migrationOrder` property to your models. This is useful for pivot tables or situations where you must create a certain table before another.
+
+```php
+class MyModel extends Model
+{
+    public $migrationOrder = 1;
+
+    public function migration(Blueprint $table)
+    {
+        $table->id();
+        $table->string('name');
+        $table->timestamp('created_at')->nullable();
+        $table->timestamp('updated_at')->nullable();
+    }
+}
+```
+
+The `migrate:auto` command will run the automatic migrations in the order specified. If no order is declared for a model, it will default to `0`. Thanks to [@vincentkedison](https://github.com/vincentkedison) for this idea.
 
 ## Publishing Stubs
 

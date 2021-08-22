@@ -18,7 +18,6 @@ class DummyModelClass extends Authenticatable
     protected $hashes = ['password'];
     protected $hidden = ['password', 'remember_token'];
     protected $casts = ['email_verified_at' => 'datetime'];
-    public    $migration_sequence = 0;
 
     public function migration(Blueprint $table)
     {
