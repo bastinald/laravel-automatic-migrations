@@ -24,8 +24,8 @@ class DummyModelClass extends Model
     public function definition(Generator $faker)
     {
         return [
-            'name' => $faker->name,
-            'created_at' => $faker->dateTimeThisMonth,
+            'name' => $faker->name(),
+            'created_at' => $faker->dateTimeThisMonth(),
         ];
     }
 }

@@ -22,14 +22,14 @@ class MigrateAutoCommand extends Command
             return;
         }
 
-        $this->runTraditionalMigrations();
-        $this->runAutomaticMigrations();
+        $this->handleTraditionalMigrations();
+        $this->handleAutomaticMigrations();
         $this->seed();
 
         $this->info('Automatic migration completed successfully.');
     }
 
-    private function runTraditionalMigrations()
+    private function handleTraditionalMigrations()
     {
         $command = 'migrate';
 
@@ -44,9 +44,9 @@ class MigrateAutoCommand extends Command
         Artisan::call($command, [], $this->getOutput());
     }
 
-    private function runAutomaticMigrations()
+    private function handleAutomaticMigrations()
     {
-        $path = is_dir(app_path('Models')) ? app_path('Models') : app_path();
+        $path = app_path('Models');
         $namespace = app()->getNamespace();
         $models = collect();
 

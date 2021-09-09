@@ -13,8 +13,6 @@ This package works fine alongside traditional Laravel migration files, for the c
     - [Running Migrations](#running-migrations)
 - [Migration Order](#migration-order)
 - [Publishing Stubs](#publishing-stubs)
-- [Traits](#traits)
-    - [HasHashes](#hashashes)
 
 ## Installation
 
@@ -110,23 +108,3 @@ Update the `stub_path` in `config/laravel-automatic-migrations.php`:
 ```
 
 Now edit the stub files inside `resources/stubs/vendor/laravel-automatic-migrations`. Commands will now use these stub files to make models and factories.
-
-## Traits
-
-### HasHashes
-
-This trait will automatically hash attributes specified via a `$hashes` property in your model. It will only do so if the values are not already hashed, so it does not slow down seeders.
-
-```php
-namespace App\Models;
-
-use Bastinald\LaravelAutomaticMigrations\Traits\HasHashes;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-
-class User extends Authenticatable
-{
-    use HasHashes;
-
-    protected $hashes = ['password'];
-}
-```

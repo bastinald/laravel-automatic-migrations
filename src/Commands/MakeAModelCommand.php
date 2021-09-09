@@ -19,7 +19,7 @@ class MakeAModelCommand extends Command
         $this->filesystem = new Filesystem;
 
         $this->modelParser = new ComponentParser(
-            is_dir(app_path('Models')) ? 'App\\Models' : 'App',
+            'App\\Models',
             config('livewire.view_path'),
             $this->argument('class')
         );
@@ -37,37 +37,36 @@ class MakeAModelCommand extends Command
             return;
         }
 
-        $this->deleteUserMigrations();
+        $this->deleteUserMigration();
         $this->makeStubs();
 
         $this->line('<info>Model created:</info> ' . $this->modelParser->relativeClassPath());
         $this->line('<info>Factory created:</info> ' . $this->factoryPath('relativeClassPath'));
     }
 
-    private function deleteUserMigrations()
+    private function deleteUserMigration()
     {
-        if ($this->modelParser->className() == 'User') {
-            $names = ['create_users_table', 'add_timezone_column_to_users_table'];
+        if ($this->modelParser->className() != 'User') {
+            return;
+        }
 
-            foreach ($this->filesystem->allFiles(database_path('migrations')) as $file) {
-                if (Str::contains($file, $names)) {
-                    $path = 'database/migrations/' . $file->getRelativePathname();
+        $path = 'database/migrations/2014_10_12_000000_create_users_table.php';
+        $file = base_path($path);
 
-                    $this->filesystem->delete($file);
+        if ($this->filesystem->exists($file)) {
+            $this->filesystem->delete($file);
 
-                    $this->line('<info>Migration deleted:</info> ' . $path);
-                }
-            }
+            $this->line('<info>Migration deleted:</info> ' . $path);
         }
     }
 
     private function makeStubs()
     {
+        $prefix = $this->modelParser->className() == 'User' ? 'User' : null;
+
         $stubs = [
-            $this->modelParser->classPath() =>
-                $this->modelParser->className() == 'User' ? 'UserModel.php' : 'Model.php',
-            $this->factoryPath('classPath') =>
-                $this->modelParser->className() == 'User' ? 'UserFactory.php' : 'Factory.php',
+            $this->modelParser->classPath() => $prefix . 'Model.php',
+            $this->factoryPath('classPath') => $prefix . 'Factory.php',
         ];
 
         $replaces = [
