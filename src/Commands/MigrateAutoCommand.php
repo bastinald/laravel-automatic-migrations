@@ -50,24 +50,47 @@ class MigrateAutoCommand extends Command
         $namespace = app()->getNamespace();
         $models = collect();
 
+        $paths = array();
+
         if (!is_dir($path)) {
             return;
         }
 
-        foreach ((new Finder)->in($path) as $model) {
-            $model = $namespace . str_replace(
-                    ['/', '.php'],
-                    ['\\', ''],
-                    Str::after($model->getRealPath(), realpath(app_path()) . DIRECTORY_SEPARATOR)
-                );
+        $modules_path = realpath(base_path()) . DIRECTORY_SEPARATOR . 'Modules';
 
-            if (method_exists($model, 'migration')) {
-                $models->push([
-                    'object' => $object = app($model),
-                    'order' => $object->migrationOrder ?? 0,
-                ]);
+        array_push($paths, ['namespace' => $namespace  . 'Models', 'file' => $path]);
+
+        $dir = new \DirectoryIterator($modules_path);
+
+        foreach ($dir as $fileinfo) {
+            if (!$fileinfo->isDot() && $fileinfo->isDir()) {
+                $module_name = $fileinfo->getFilename();
+                $module_path = $modules_path . DIRECTORY_SEPARATOR . $module_name . DIRECTORY_SEPARATOR . 'Entities';
+                array_push($paths, ['namespace' => 'Modules\\'  . $module_name . '\\Entities', 'file' => $module_path]);
             }
         }
+
+        foreach ($paths as $key => $path) {
+
+            foreach ((new Finder)->in($path['file']) as $model) {
+
+                $real_path_arr = array_reverse(explode(DIRECTORY_SEPARATOR, $model->getRealPath()));
+
+                $model = $path['namespace'] . str_replace(
+                    ['/', '.php'],
+                    ['\\', ''],
+                    '\\' . $real_path_arr[0]
+                );
+
+                if (method_exists($model, 'migration')) {
+                    $models->push([
+                        'object' => $object = app($model),
+                        'order' => $object->migrationOrder ?? 0,
+                    ]);
+                }
+            }
+        }
+
 
         foreach ($models->sortBy('order') as $model) {
             $this->migrate($model['object']);
